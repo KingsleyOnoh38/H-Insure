@@ -22,6 +22,8 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setIsLoading(true);
+
     if (!address) {
       alert("Wallet not connected");
       return;
@@ -31,11 +33,11 @@ export default function Signup() {
     // Check if user already signed contract..
     if (userRegistered === true) {
       setIsRegistered(true);
+      setIsLoading(false);
       return;
     }
     // Check if wallet is connected
     try {
-      setIsLoading(true);
       const data = await createUser({ ...form });
       setIsLoading(false);
       setRegistered(true);
@@ -43,6 +45,7 @@ export default function Signup() {
       // data.wait();
     } catch (err) {
       // setError(err.message);
+      setIsLoading(false);
       console.error("contract call failure", err);
     }
   };

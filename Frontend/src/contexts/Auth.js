@@ -1,32 +1,30 @@
-import {createContext, useContext} from "react";
-import {useAddress, useContract, useContractWrite, useMetamask,} from "@thirdweb-dev/react";
+import {createContext, useContext, useEffect, useState} from "react";
+import {useAddress, useContract, useContractWrite, useMetamask} from "@thirdweb-dev/react";
 
-const AuthContext = createContext();
+const AuthContext = createContext(undefined);
 
 export const AuthContextProvider = ({ children }) => {
-  const { contract } = useContract(
-    "0x83C0511Ca308909b494A72a5879b5cc9790F7D1f"
-  );
-  // User.sol smart contract
-  const { mutateAsync: createUser } = useContractWrite(contract, "createUser");
+    const address = useAddress();
+    const connect = useMetamask();
 
-  const address = useAddress();
-  const connect = useMetamask();
+    // User.sol smart contract
+    const { contract } = useContract(
+        // "0x5cE82044550a64F77859C7b522A139C2617d6bEf"
+        "0x9353C6a49470aa9cC585F2e5F84bA8dd7e16704D"
+    );
+    const { mutateAsync: createUser } = useContractWrite(contract, "createUser");
+    const [userDetails, setUserDetails] = useState([]);
 
-  const registerUser = async (form) => {
-    try {
-      const data = await createUser([
-        address, // owner or creator
-        form.role, // Role of the user
-        form.name, // The name of the user
-      ]);
-
-      // contract successful..
-      console.info("contract call successs", data);
-    } catch (err) {
-      console.log("contract failed", err);
-    }
-  };
+    useEffect( () =>{
+        (async () => {
+            try {
+                const userDetails = await contract.call("users", address);
+                setUserDetails(userDetails);
+            } catch (e) {
+                console.log("contract failed", e);
+            }
+        })();
+    }, [contract, address])
 
   const checkUser = async (address) => {
     try {
@@ -35,15 +33,27 @@ export const AuthContextProvider = ({ children }) => {
         console.log("contract failed", e);
     }
   };
+    const registerUser = async (form) => {
+        try {
+            const data = await createUser([
+                address, // owner or creator
+                form.role, // Role of the user
+                form.name, // The name of the user
+            ]);
 
-  const getRole = async (address) => {
-    return await contract.call("getRole", address);
-  };
-
-  // const isRegistered = async () => {
-  //   const userIsRegistered = await checkUser();
-  //   if (address === userIsRegistered) return true;
-  // };
+            // contract successful..
+            console.info("contract call successs", data);
+        } catch (err) {
+            console.log("contract failed", err);
+        }
+    };
+    const getUserDetails = async (address) => {
+        try {
+            return await contract.call("users", address);
+        } catch (e) {
+            console.log("contract failed", e);
+        }
+    };
 
   return (
     <AuthContext.Provider
@@ -51,10 +61,10 @@ export const AuthContextProvider = ({ children }) => {
         address,
         contract,
         connect,
+          userDetails,
         createUser: registerUser,
         checkUser,
-        // isRegistered,
-        getRole,
+        // getUserDetails
       }}
     >
       {children}

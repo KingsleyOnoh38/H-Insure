@@ -13,6 +13,7 @@ contract User {
     }
 
     mapping(address => UserStruct) public users;
+    address[] public userAddresses;
 
     event UserCreated(address indexed userAddress, string role, string name);
     event UserRemoved(address indexed userAddress);
@@ -29,6 +30,7 @@ contract User {
         Role role = new Role();
         users[_user] = UserStruct(_name, _role);
         role.setRole(_user, _role);
+        userAddresses.push(_user);
 
         emit UserCreated(_user, _role, _name);
     }
@@ -39,6 +41,14 @@ contract User {
         Role role = new Role();
         delete users[_user];
         role.setRole(_user, "");
+
+        for (uint i = 0; i < userAddresses.length; i++) {
+            if (userAddresses[i] == _user) {
+                userAddresses[i] = userAddresses[userAddresses.length - 1];
+                userAddresses.pop();
+                break;
+            }
+        }
 
         emit UserRemoved(_user);
     }
@@ -53,5 +63,9 @@ contract User {
 
     function userExists(address _user) public view returns (bool) {
         return bytes(users[_user].name).length != 0;
+    }
+
+    function getAllUsers() public view returns (address[] memory) {
+        return userAddresses;
     }
 }

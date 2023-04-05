@@ -5,23 +5,7 @@ import { useAuthContext } from "../contexts/Auth";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
-    const address = useAddress();
-    const { checkUser } = useAuthContext();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() =>{
-      // Function to fetch user data from API
-      async function checked(address) {
-          if (await checkUser(address) === true){
-              console.log(true);
-              setIsLoggedIn(true);
-          }
-      }
-
-      checked(address);
-  }, [address, checkUser]);
-
-
+    const { userDetails } = useAuthContext();
   return (
     <nav
       style={{
@@ -83,7 +67,7 @@ export default function Navbar() {
           <Link to="/About">About</Link>
         </li>
         { <li style={{ margin: "0 10px" }}>
-          {isLoggedIn ? (
+          {userDetails.length !== 0 ? (
             <Link to="/dashboard">Dashboard</Link>
           ) : (
             ""

@@ -12,8 +12,8 @@ contract HealthInsure{
         uint amountInsured;
     }
 
-    mapping (address => User) public userMapping;
-    mapping (address => bool) public doctorMapping;
+    mapping (address => User) public user;
+    mapping (address => bool) public doctor;
     
     constructor() {
         owner = msg.sender;
@@ -26,24 +26,24 @@ contract HealthInsure{
     }
 
     function setDoctor(address _address) public onlyAuthorized {
-        require(!doctorMapping[_address], "Doctor already authorized");
-        doctorMapping[_address] = true; 
+        require(!doctor[_address], "Doctor already authorized");
+        doctor[_address] = true; 
     }
 
-    function setUser(string memory _name, uint _amountInsured) public onlyAuthorized returns (address) {
+    function setUser(address uniqueId, string memory _name, uint _amountInsured) public returns (address) {
         bytes32 hash = sha256(abi.encodePacked(_name));
         address uniqueId = address(uint160(uint256(hash)));
         
-        userMapping[uniqueId].name = _name;
-        userMapping[uniqueId].amountInsured = _amountInsured;
+        user[uniqueId].name = _name;
+        user[uniqueId].amountInsured = _amountInsured;
         return uniqueId;
     }
 
     function useInsurance(address _uniqueId, uint _amountUsed) public onlyAuthorized returns (string memory) {
-        require(doctorMapping[msg.sender], "Only doctor can use the insurance");
-        require(userMapping[_uniqueId].amountInsured >= _amountUsed, "Insufficient insurance amount");
+        require(doctor[msg.sender], "Only doctor can use the insurance");
+        require(user[_uniqueId].amountInsured >= _amountUsed, "Insufficient insurance amount");
 
-        userMapping[_uniqueId].amountInsured -= _amountUsed;
+        user[_uniqueId].amountInsured -= _amountUsed;
         return "Insurance has been successfully used.";
     }
 

@@ -1,8 +1,17 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import {useAuthContext} from "../contexts/Auth";
 
 const DashboardLayoutRoute = () => {
+    // const {userDetails} = useAuthContext();
+    // console.log(userDetails)
+    // useEffect(() => {
+    //     // check if user is loggedIn
+    //     if (userDetails.length === 0){
+    //         window.location = '/';
+    //     }
+    // })
   return (
     <>
       <Sidebar />

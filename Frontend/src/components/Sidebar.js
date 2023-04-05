@@ -4,18 +4,7 @@ import { useAuthContext } from "../contexts/Auth";
 import { useAddress } from "@thirdweb-dev/react";
 
 const Sidebar = () => {
-  const { getRole } = useAuthContext();
-  const [role, setRole] = useState("patient");
-  const address = useAddress();
-
-  useEffect(() => {
-    (async () => {
-      const user = await getRole();
-      if (user === address) {
-        setRole(true);
-      }
-    })();
-  }, [address, getRole]);
+  const { userDetails } = useAuthContext();
 
   return (
     <aside
@@ -25,6 +14,12 @@ const Sidebar = () => {
     >
       <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul className="space-y-2 font-medium">
+          <li>
+            <a className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100
+             dark:hover:bg-gray-700">
+              Hello, {userDetails['name']}
+            </a>
+          </li>
           <li>
             <Link
               to="/dashboard"
@@ -43,7 +38,7 @@ const Sidebar = () => {
               <span className="ml-3">Dashboard</span>
             </Link>
           </li>
-          {(role === "admin") & (role === "doctor") ? (
+          {(userDetails['role'] === "admin") ? (
             <li>
               <Link
                 to="/authorize-doctor"
@@ -66,7 +61,7 @@ const Sidebar = () => {
           ) : (
             ""
           )}
-          {(role === "admin") & (role === "doctor") ? (
+          {(userDetails['role'] === "admin") ? (
             <li>
               <Link
                 to="/doctors"
@@ -88,7 +83,7 @@ const Sidebar = () => {
           ) : (
             ""
           )}
-          {(role === "admin") & (role === "doctor") ? (
+          {(userDetails['role'] === "admin") || (userDetails['role'] === "doctor") ? (
             <li>
               <Link
                 to="/patients"
@@ -114,28 +109,32 @@ const Sidebar = () => {
           ) : (
             ""
           )}
-          <li>
-            <Link
-              to="/insure"
-              className="flex items-center p-2 text-gray-900 rounded-lg
+          {(userDetails['role'] === "patient") ? (
+              <li>
+                <Link
+                    to="/insure"
+                    className="flex items-center p-2 text-gray-900 rounded-lg
                dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <svg
-                aria-hidden="true"
-                className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="flex-1 ml-3 whitespace-nowrap">Insure</span>
-            </Link>
-          </li>
+                >
+                  <svg
+                      aria-hidden="true"
+                      className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="flex-1 ml-3 whitespace-nowrap">Insure</span>
+                </Link>
+              </li>
+          ) : (
+              ""
+          )}
           <li>
             <Link
               to="/profile"

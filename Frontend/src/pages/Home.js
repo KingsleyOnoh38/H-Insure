@@ -32,7 +32,7 @@ export default function Home(props) {
         </div>
         <div className="flex justify-center h-full overflow-hidden lg:w-2/3 xl:w-1/2 lg:absolute lg:justify-start lg:bottom-0 lg:right-0 lg:items-end">
           <img
-            src=""
+            src="https://media.istockphoto.com/id/1005014108/photo/individual-health-insurance-policy-and-stethoscope.jpg?s=1024x1024&w=is&k=20&c=9Q52AkV6_eVi9_VSTXdrM-CN2CDqJdmQ5ad4yVrpuKI="
             className="object-cover object-top w-full h-64 max-w-xl -mb-16 rounded shadow-2xl lg:ml-64 xl:ml-8 lg:-mb-24 xl:-mb-28 lg:h-auto lg:max-w-screen-md"
             alt=""
           />
